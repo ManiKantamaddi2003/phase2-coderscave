@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: 'poppins', sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        input {
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .weather-box {
+            display: none;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        p {
+            font-size: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="city" placeholder="Enter city" required>
+    <button onclick="getWeather()">Get Weather</button>
+    
+    <div class="weather-box" id="weather-container">
+        <h1 id="weather-info"></h1>
+        <p id="weather-data"></p>
+    </div>
+
+    <script>
+        function getWeather() {
+            var city = document.getElementById("city").value;
+            var api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=06c921750b9a82d8f5d1294e1586276f";
+
+            fetch(api)
+                .then(response => response.json())
+                .then(data => {
+                    var condition = data.weather[0].main;
+                    var temp = Math.round(data.main.temp - 273.15);
+                    var min_temp = Math.round(data.main.temp_min - 273.15);
+                    var max_temp = Math.round(data.main.temp_max - 273.15);
+                    var pressure = data.main.pressure;
+                    var humidity = data.main.humidity;
+                    var wind = data.wind.speed;
+                    var sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString('en-US');
+                    var sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('en-US');
+
+                    var final_info = condition + "<br>" + temp + "°C";
+                    var final_data = "<br>" + "Min Temp: " + min_temp + "°C" + "<br>" + "Max Temp: " + max_temp + "°C" + "<br>" +
+                                     "Pressure: " + pressure + "<br>" + "Humidity: " + humidity + "%" + "<br>" +
+                                     "Wind Speed: " + wind + "<br>" + "Sunrise: " + sunrise + "<br>" + "Sunset: " + sunset;
+
+                    document.getElementById("weather-info").innerHTML = final_info;
+                    document.getElementById("weather-data").innerHTML = final_data;
+
+                    // Show weather container
+                    document.getElementById("weather-container").style.display = "block";
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Unable to fetch weather data. Please try again.');
+                });
+        }
+    </script>
+</body>
+</html>
